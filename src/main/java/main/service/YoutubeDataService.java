@@ -11,6 +11,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
@@ -23,6 +24,8 @@ import java.util.concurrent.*;
 @Component
 public class YoutubeDataService {
     @Autowired
+    UrlService urlService;
+    @Autowired
     RestTemplate restTemplate;
     @Autowired
     YoutubeErrorService youtubeErrorService;
@@ -31,7 +34,7 @@ public class YoutubeDataService {
         long before = System.currentTimeMillis();
 
         RestTemplate restTemplate1 = new RestTemplate();
-        UriComponentsBuilder builder = UrlService.getChannelsRequestBuilder(userId);
+        UriComponentsBuilder builder = urlService.getChannelsRequestBuilder(userId);
         ResponseEntity<YoutubeDataResponse> response = restTemplate1.getForEntity(builder.toUriString(), YoutubeDataResponse.class);
 
         YoutubeDataResponse data = response.getBody();
@@ -67,21 +70,29 @@ public class YoutubeDataService {
         }
 
         try {
-            HttpURLConnection request = (HttpURLConnection)new URL(UrlService.getPingUrl(userId1).toUriString()).openConnection();
+            HttpURLConnection request = (HttpURLConnection)new URL(urlService.getPingUrl(userId1).toUriString()).openConnection();
             int responseCode = request.getResponseCode();
-            if(responseCode==404){
-                youtubeErrorService.addError(YoutubeDataErrors.USERNOTFOUND,"userId1");
+            if(responseCode>=400){
+                if(responseCode==404){
+                    youtubeErrorService.addError(YoutubeDataErrors.USERNOTFOUND,"userId1");
+                }
+                else if (responseCode==403){
+                    youtubeErrorService.addError(YoutubeDataErrors.PRIVATECHANNELS,"userId1");
+                }
+                else youtubeErrorService.addError(YoutubeDataErrors.ERROR);
             }
-            else if (responseCode==403){
-                youtubeErrorService.addError(YoutubeDataErrors.PRIVATECHANNELS,"userId1");
-            }
-            HttpURLConnection request1 = (HttpURLConnection)new URL(UrlService.getPingUrl(userId2).toUriString()).openConnection();
+
+
+            HttpURLConnection request1 = (HttpURLConnection)new URL(urlService.getPingUrl(userId2).toUriString()).openConnection();
             int responseCode1 = request1.getResponseCode();
-            if(responseCode1==404){
-                youtubeErrorService.addError(YoutubeDataErrors.USERNOTFOUND,"userId2");
-            }
-            else if (responseCode1==403){
-                youtubeErrorService.addError(YoutubeDataErrors.PRIVATECHANNELS,"userId2");
+            if(responseCode1>=400){
+                if(responseCode1==404){
+                    youtubeErrorService.addError(YoutubeDataErrors.USERNOTFOUND,"userId2");
+                }
+                else if (responseCode1==403){
+                    youtubeErrorService.addError(YoutubeDataErrors.PRIVATECHANNELS,"userId2");
+                }
+                else youtubeErrorService.addError(YoutubeDataErrors.ERROR);
             }
 
         } catch (IOException e) {

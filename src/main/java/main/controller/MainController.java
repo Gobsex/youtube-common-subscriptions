@@ -6,6 +6,9 @@ import main.exception.YoutubeDataException;
 import main.service.YoutubeErrorService;
 import main.service.YoutubeDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,15 +23,15 @@ public class MainController {
     @Autowired
     YoutubeDataService service;
     @GetMapping("/")
-    public Object index(@RequestParam String userId1,
-                                      @RequestParam String userId2) {
+    public ResponseEntity index(@RequestParam String userId1,
+                                @RequestParam String userId2) {
         try {
-            return service.getListOfCommonChannels(userId1,userId2);
+            return new ResponseEntity(service.getListOfCommonChannels(userId1,userId2),HttpStatus.OK);
         } catch (YoutubeDataException e) {
-            List<YoutubeDataError> errors = new ArrayList<>();
-            errors.addAll(youtubeErrorService.getErrors());
+            List<YoutubeDataError> errors = new ArrayList<>(youtubeErrorService.getErrors());
+
             youtubeErrorService.clear();
-            return errors;
+            return new ResponseEntity(errors,HttpStatus.BAD_REQUEST);
         }
     }
 }

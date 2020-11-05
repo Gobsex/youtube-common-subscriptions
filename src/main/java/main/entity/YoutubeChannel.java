@@ -5,6 +5,7 @@ import lombok.NonNull;
 import main.domain.YoutubeChannelInfo;
 import main.domain.YoutubeChannelResponse;
 import main.service.UrlService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Data
 public class YoutubeChannel {
