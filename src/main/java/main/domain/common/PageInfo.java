@@ -1,9 +1,9 @@
-package main.domain;
+package main.domain.common;
 
 import lombok.Data;
 
 @Data
-public class PageInfoResponse {
+public class PageInfo {
      private int totalResults;
      private int resultsPerPage;
 }

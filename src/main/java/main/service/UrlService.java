@@ -15,6 +15,7 @@ public class UrlService {
     @Value("${youtubeApi.host}")
     private String youtubeApiHost;
 
+
     @Getter
     @Setter
     @Value("${youtubeApi.key}")
@@ -22,6 +23,18 @@ public class UrlService {
 
     private static String youtubeHost;
 
+
+    public UriComponentsBuilder getCommentsRequestBuilder(String videoId){
+
+        UriComponentsBuilder builder = UriComponentsBuilder.newInstance()
+                .scheme("https").host(youtubeApiHost).path("youtube/v3/commentThreads")
+                .queryParam("part", "snippet,replies")
+                .queryParam("maxResults","50")
+                .queryParam("key",youtubeApiKey)
+                .queryParam("videoId", videoId);
+        return builder;
+
+    }
     public UriComponentsBuilder getChannelsRequestBuilder(String userId){
 
         UriComponentsBuilder builder = UriComponentsBuilder.newInstance()

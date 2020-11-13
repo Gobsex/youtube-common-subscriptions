@@ -1,37 +1,40 @@
 package main.controller;
 
-import main.entity.YoutubeDataError;
-import main.entity.YoutubeDataErrors;
+import main.entity.YoutubeChannelFormatted;
 import main.exception.YoutubeDataException;
-import main.service.YoutubeErrorService;
 import main.service.YoutubeDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 @RestController
 public class MainController {
     @Autowired
-    YoutubeErrorService youtubeErrorService;
-    @Autowired
-    YoutubeDataService service;
-    @GetMapping("/")
-    public ResponseEntity index(@RequestParam String userId1,
-                                @RequestParam String userId2) {
-        try {
-            return new ResponseEntity(service.getListOfCommonChannels(userId1,userId2),HttpStatus.OK);
-        } catch (YoutubeDataException e) {
-            List<YoutubeDataError> errors = new ArrayList<>(youtubeErrorService.getErrors());
-
-            youtubeErrorService.clear();
-            return new ResponseEntity(errors,HttpStatus.BAD_REQUEST);
-        }
+    YoutubeDataService youtubeDataService;
+    @GetMapping("/subscriptions")
+    public ResponseEntity<List<YoutubeChannelFormatted>> index(
+            @RequestParam("userId") List<String> userIds,
+            @RequestParam(defaultValue = "false") boolean ignoreErrors,
+            @RequestParam(defaultValue = "1.0") double threshold)
+            throws YoutubeDataException, InterruptedException, IOException {
+        List<YoutubeChannelFormatted> commonChannels = youtubeDataService.getCommonChannelsByUserIds(userIds, ignoreErrors, threshold);
+        return new ResponseEntity(commonChannels,HttpStatus.OK);
     }
+
+
+    @GetMapping("/comments")
+    public ResponseEntity<List<YoutubeChannelFormatted>> test(@RequestParam String videoId,@RequestParam(defaultValue = "1.0") double threshold)
+
+            throws YoutubeDataException, InterruptedException, IOException {
+        List<YoutubeChannelFormatted> common = youtubeDataService.getCommonChannelsByVideoComments(videoId, threshold);
+        return new ResponseEntity(common,HttpStatus.OK);
+    }
+
+
 }

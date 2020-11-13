@@ -1,9 +1,9 @@
-package main.domain;
+package main.domain.common;
 
 import lombok.Data;
 
 @Data
-public class YoutubePhotoResponse {
+public class YoutubePhoto {
     private String url;
 
     public String getUrl() {

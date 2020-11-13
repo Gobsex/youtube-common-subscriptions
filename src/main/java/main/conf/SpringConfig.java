@@ -1,6 +1,8 @@
 package main.conf;
 
 import main.service.UrlService;
+import main.service.YoutubeCommentService;
+import main.service.YoutubeDataService;
 import main.service.YoutubeErrorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +21,16 @@ public class SpringConfig {
         return new UrlService();
     }
     @Bean
-    @Scope("singleton")
+    @RequestScope
     public YoutubeErrorService errorService(){
         return new YoutubeErrorService();
+    }
+    @Bean
+    public YoutubeDataService youtubeDataService(){
+        return new YoutubeDataService();
+    }
+    @Bean
+    public YoutubeCommentService youtubeCommentService(){
+        return new YoutubeCommentService();
     }
 }

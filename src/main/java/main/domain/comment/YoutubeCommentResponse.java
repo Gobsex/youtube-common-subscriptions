@@ -1,16 +1,18 @@
-package main.domain;
+package main.domain.comment;
 
 import lombok.Data;
+import main.domain.common.PageInfo;
+import main.domain.channel.YoutubeChannelItem;
 
 import java.util.List;
-@Data
-public class YoutubeDataResponse {
-    private String nextPageToken;
 
+@Data
+public class YoutubeCommentResponse {
+    private String nextPageToken;
     private String kind;
     private String etag;
-    private PageInfoResponse pageInfo;
-    private List<YoutubeChannelResponse> items;
+    private PageInfo pageInfo;
+    private List<YoutubeСommentItem> items;
         @Override
     public String toString() {
         return "main.Domain.ResponseYoutubeData{" +
@@ -22,7 +24,7 @@ public class YoutubeDataResponse {
         return nextPageToken;
     }
 
-    public List<YoutubeChannelResponse> getItems() {
+    public List<YoutubeСommentItem> getItems() {
         return items;
     }
 }

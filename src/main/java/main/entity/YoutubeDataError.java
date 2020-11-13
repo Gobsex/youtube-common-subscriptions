@@ -1,20 +1,21 @@
 package main.entity;
 
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
 
 @Data
 public class YoutubeDataError {
-    private YoutubeDataErrors error;
+    private HttpStatus status;
     private String cause;
 
-    public YoutubeDataError(YoutubeDataErrors error, String cause) {
-        this.error = error;
+    public YoutubeDataError(HttpStatus status, String cause) {
+        this.status = status;
         this.cause = cause;
     }
-    public YoutubeDataError(YoutubeDataErrors error) {
-        this.error = error;
+    public YoutubeDataError(HttpStatus status) {
+        this.status = status;
     }
 
     @Override
